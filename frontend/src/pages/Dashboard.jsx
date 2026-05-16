@@ -9,6 +9,7 @@ export default function Dashboard() {
   const loadTasks = async () => {
     try {
       const res = await API.get("/tasks");
+      console.log("TASKS API RESPONSE:", res.data);
 
       // SAFE handling
       setTasks(res.data.tasks || res.data || []);
