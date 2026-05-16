@@ -11,7 +11,7 @@ export default function CreateTask() {
   title,
   description: "task",
   assignedTo,
-  project,
+  project: projectId,
   dueDate: "2026-05-20"
 });
 
