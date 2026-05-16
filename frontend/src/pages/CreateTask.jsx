@@ -7,26 +7,55 @@ export default function CreateTask() {
   const [assignedTo, setAssignedTo] = useState("");
 
   const create = async () => {
-    await API.post("/tasks/create", {
-  title,
-  description: "task",
-  assignedTo,
-  project: projectId,
-  dueDate: "2026-05-20"
-});
+    try {
+      const res = await API.post("/tasks", {
+        title,
+        description: "task",
+        assignedTo,
+        project: projectId,
+        dueDate: "2026-05-20"
+      });
 
-    alert("Task Created");
+      console.log("TASK CREATED:", res.data);
+      alert("Task Created Successfully");
+
+      // optional reset
+      setTitle("");
+      setProjectId("");
+      setAssignedTo("");
+
+    } catch (err) {
+      console.log("TASK ERROR:", err.response?.data || err.message);
+      alert("Task creation failed");
+    }
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>Create Task</h2>
 
-      <input placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
-      <input placeholder="Project ID" onChange={(e) => setProjectId(e.target.value)} />
-      <input placeholder="User ID" onChange={(e) => setAssignedTo(e.target.value)} />
+      <input
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <br />
 
-      <button onClick={create}>Create</button>
+      <input
+        placeholder="Project ID"
+        value={projectId}
+        onChange={(e) => setProjectId(e.target.value)}
+      />
+      <br />
+
+      <input
+        placeholder="Assigned User ID"
+        value={assignedTo}
+        onChange={(e) => setAssignedTo(e.target.value)}
+      />
+      <br />
+
+      <button onClick={create}>Create Task</button>
     </div>
   );
 }
