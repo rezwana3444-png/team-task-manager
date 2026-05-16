@@ -3,21 +3,24 @@ import API from "../services/api";
 
 export default function ViewProjects() {
   const [projects, setProjects] = useState([]);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     API.get("/projects")
       .then((res) => {
-        console.log(res.data);
-        setProjects(res.data);
+        setMessage(JSON.stringify(res.data));
+        setProjects(res.data.projects || res.data);
       })
       .catch((err) => {
-        console.log(err);
+        setMessage(err.response?.data?.message || "Error");
       });
   }, []);
 
   return (
     <div>
       <h1>Projects</h1>
+
+      <p>{message}</p>
 
       {projects.length === 0 ? (
         <p>No projects found</p>
