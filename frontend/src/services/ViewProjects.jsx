@@ -7,6 +7,7 @@ export default function ViewProjects() {
   useEffect(() => {
     API.get("/projects")
       .then((res) => {
+        console.log(res.data);
         setProjects(res.data);
       })
       .catch((err) => {
@@ -16,13 +17,17 @@ export default function ViewProjects() {
 
   return (
     <div>
-      <h2>Projects</h2>
+      <h1>Projects</h1>
 
-      {projects.map((project) => (
-        <div key={project._id}>
-          <p>{project.name}</p>
-        </div>
-      ))}
+      {projects.length === 0 ? (
+        <p>No projects found</p>
+      ) : (
+        projects.map((project) => (
+          <div key={project._id}>
+            <p>{project.name}</p>
+          </div>
+        ))
+      )}
     </div>
   );
 }

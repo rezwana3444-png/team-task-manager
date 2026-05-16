@@ -7,6 +7,7 @@ export default function Tasks() {
   useEffect(() => {
     API.get("/tasks")
       .then((res) => {
+        console.log(res.data);
         setTasks(res.data);
       })
       .catch((err) => {
@@ -16,14 +17,17 @@ export default function Tasks() {
 
   return (
     <div>
-      <h2>Tasks</h2>
+      <h1>Tasks</h1>
 
-      {tasks.map((task) => (
-        <div key={task._id}>
-          <p>{task.title}</p>
-          <p>{task.status}</p>
-        </div>
-      ))}
+      {tasks.length === 0 ? (
+        <p>No tasks found</p>
+      ) : (
+        tasks.map((task) => (
+          <div key={task._id}>
+            <p>{task.title}</p>
+          </div>
+        ))
+      )}
     </div>
   );
 }
