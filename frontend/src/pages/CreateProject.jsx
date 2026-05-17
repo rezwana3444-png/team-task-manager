@@ -5,7 +5,7 @@ export default function CreateProject() {
   const [name, setName] = useState("");
 
   const create = async () => {
-    await API.post("/projects", { name });
+    await API.post("/api/projects", { name });
     alert("Project Created");
   };
 

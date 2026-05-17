@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import ViewProjects from "./pages/ViewProjects";
 import CreateTask from "./pages/CreateTask";
+import CreateProject from "./pages/CreateProject"; // 1. Import it
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
         <Route path="/create-task" element={<CreateTask />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/projects" element={<ViewProjects />} />
+        
+        {/* 2. ADD THIS LINE */}
+        <Route path="/create-project" element={<CreateProject />} /> 
       </Routes>
     </BrowserRouter>
   );
