@@ -36,40 +36,27 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-/* ---------------- LOGIN ---------------- */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    
-    // Find user
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" }); // Changed from User not found for security
-    }
+    
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    // Compare
+    // DEBUG LOGS
+    console.log("DEBUG: Input Password:", password);
+    console.log("DEBUG: Stored Hash:", user.password);
+
     const isMatch = await bcrypt.compare(password, user.password);
     
-    if (!isMatch) {
-      console.log("Login failed: Password mismatch for email", email);
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    console.log("DEBUG: Is Match Result:", isMatch);
 
-    // Generate Token
-    const token = jwt.sign(
-      { id: user._id, role: user.role }, 
-      process.env.JWT_SECRET, 
-      { expiresIn: "1d" }
-    );
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    res.json({
-      token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
-    });
-
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 module.exports = router;
