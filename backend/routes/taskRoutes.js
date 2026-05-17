@@ -21,7 +21,6 @@ router.get("/", auth, async (req, res) => {
   try {
     const tasks = await Task.find()
       .populate("assignedTo")
-      .populate("project");
 
     res.json(tasks);
   } catch (err) {

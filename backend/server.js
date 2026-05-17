@@ -2,21 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
 
 const app = express();
 
 console.log("SERVER STARTED");
-
-// ======================
-// IMPORT ROUTES
-// ======================
-const authRoutes = require("./routes/authRoutes");
-const projectRoutes = require("./routes/projectRoutes");
-const taskRoutes = require("./routes/taskRoutes");
-
-console.log("PROJECT ROUTES LOADED");
-console.log("TASK ROUTES LOADED");
 
 // ======================
 // MIDDLEWARE
@@ -36,6 +25,15 @@ app.get("/test", (req, res) => {
 });
 
 // ======================
+// IMPORT ROUTES
+// ======================
+const authRoutes = require("./routes/authRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+
+console.log("ROUTES LOADED");
+
+// ======================
 // API ROUTES
 // ======================
 app.use("/api/auth", authRoutes);
@@ -45,7 +43,8 @@ app.use("/api/tasks", taskRoutes);
 // ======================
 // DATABASE CONNECTION
 // ======================
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected");
 

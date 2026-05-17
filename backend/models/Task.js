@@ -10,10 +10,10 @@ const taskSchema = new mongoose.Schema({
     default: "todo"
   },
 
-  projectId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Project"
-  },
+  project: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Project"
+},
 
   assignedTo: {
     type: mongoose.Schema.Types.ObjectId,
