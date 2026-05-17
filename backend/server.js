@@ -5,23 +5,24 @@ const cors = require("cors");
 
 const app = express();
 
-console.log("SERVER STARTED");
-
 // ======================
 // MIDDLEWARE
 // ======================
-app.use(cors());
+// IMPORTANT: Replace the origin URL below with your actual Vercel frontend URL
+const corsOptions = {
+  origin: ["https://team-task-manager-ten-rho.vercel.app/"], // Change this to your actual Vercel URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions)); 
 app.use(express.json());
 
 // ======================
-// BASIC TEST ROUTES
+// TEST ROUTES
 // ======================
 app.get("/", (req, res) => {
   res.send("Backend is working 🚀");
-});
-
-app.get("/test", (req, res) => {
-  res.send("TEST WORKING");
 });
 
 // ======================
@@ -31,10 +32,8 @@ const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 
-console.log("ROUTES LOADED");
-
 // ======================
-// API ROUTES
+// API ROUTES (Note the /api prefix)
 // ======================
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
@@ -43,16 +42,17 @@ app.use("/api/tasks", taskRoutes);
 // ======================
 // DATABASE CONNECTION
 // ======================
-mongoose.connect(process.env.MONGO_URI)
+const PORT = process.env.PORT || 5000;
+
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("MongoDB Connected");
-
-    const PORT = process.env.PORT || 5000;
-
+    console.log("MongoDB Connected Successfully");
     app.listen(PORT, () => {
-      console.log("Server running on port", PORT);
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.log("MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1); // Exit if DB connection fails
   });
