@@ -12,8 +12,8 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://team-task-manager-r1rya2gyu-rezwana-s-projects.vercel.app",
-    "https://team-task-manager-production-707c.up.railway.app"
+    "http:team-task-manager-qxdflgt5r-rezwana-s-projects.vercel.app",
+    "https://team-task-manager-production-e1ce7.up.railway.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
