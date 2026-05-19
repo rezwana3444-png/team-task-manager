@@ -1,16 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  // Use the full URL that ends in .railway.app
-  baseURL: "https://team-task-manager-production-707c.up.railway.app/api"
-});
-
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 export default API;
