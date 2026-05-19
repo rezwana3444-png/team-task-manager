@@ -9,8 +9,12 @@ const app = express();
 // MIDDLEWARE
 // ======================
 app.use(cors({
-  origin: ["http://localhost:5173", "https://team-task-manager-ten-rho.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin:[
+    "http://localhost:5173", 
+    "https://team-task-manager-ten-rho.vercel.app",
+    "https://team-task-manager-git-main-rezwana-s-projects.vercel.app" // Add this line!
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Add OPTIONS
   credentials: true
 }));
 app.use(express.json());
