@@ -22,6 +22,7 @@ function Login() {
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
         console.log("TOKEN SAVED");
+        window.location.href = "/dashboard";
       }
 
       alert("Login successful!");
