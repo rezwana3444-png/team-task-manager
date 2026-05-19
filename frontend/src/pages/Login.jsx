@@ -1,52 +1,62 @@
 import { useState } from "react";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const nav = useNavigate();
+function Login() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleLogin = async (e) => {
-    // 1. Prevent the page from reloading
-    e.preventDefault(); 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log("LOGIN CLICKED");
+    console.log("LOGIN DATA:", formData);
 
     try {
-      // 2. Perform the request
-      const res = await API.post("/auth/login", { email, password });
-      
-      // 3. Save token only if response exists
-      if (res.data && res.data.token) {
+      const res = await API.post("/auth/login", formData);
+
+      console.log("LOGIN SUCCESS:", res.data);
+
+      // If token exists, store it
+      if (res.data.token) {
         localStorage.setItem("token", res.data.token);
-        nav("/dashboard");
+        console.log("TOKEN SAVED");
       }
+
+      alert("Login successful!");
     } catch (err) {
-      // 4. Debugging: This will show you EXACTLY why it failed in the console
-      console.error("Full Error:", err);
-      alert("Login Failed: " + (err.response?.data?.message || "Invalid credentials"));
+      console.log("LOGIN ERROR:", err.response?.data || err.message);
+
+      alert("Login failed");
     }
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <form onSubmit={handleSubmit}>
       <h2>Login</h2>
-      {/* 5. Wrap in a form to handle 'Enter' key and onSubmit */}
-      <form onSubmit={handleLogin}>
-        <input 
-          placeholder="email" 
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} 
-        />
-        <br />
-        <input 
-          placeholder="password" 
-          type="password" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} 
-        />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+
+      <input
+        type="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={(e) =>
+          setFormData({ ...formData, email: e.target.value })
+        }
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={(e) =>
+          setFormData({ ...formData, password: e.target.value })
+        }
+      />
+
+      <button type="submit">Login</button>
+    </form>
   );
 }
+
+export default Login;
