@@ -21,13 +21,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-  // Intercept OPTIONS method
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
 // ======================
 // TEST ROUTES
 // ======================
