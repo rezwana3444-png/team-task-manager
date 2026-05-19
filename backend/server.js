@@ -8,14 +8,11 @@ const app = express();
 // ======================
 // MIDDLEWARE
 // ======================
-// IMPORTANT: Replace the origin URL below with your actual Vercel frontend URL
-const corsOptions = {
-  origin: ["https://team-task-manager-ten-rho.vercel.app/"], // Change this to your actual Vercel URL
+app.use(cors({
+  origin: ["http://localhost:5173", "https://team-task-manager-ten-rho.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions)); 
+  credentials: true
+}));
 app.use(express.json());
 
 // ======================
