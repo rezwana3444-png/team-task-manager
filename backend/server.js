@@ -8,16 +8,25 @@ const app = express();
 // ======================
 // MIDDLEWARE
 // ======================
+// REPLACE your current app.use(cors({ ... })) with this:
 app.use(cors({
-  origin:[
-    "http://localhost:5173", 
-    "https://team-task-manager-ten-rho.vercel.app",
-    "https://team-task-manager-git-main-rezwana-s-projects.vercel.app" // Add this line!
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Add OPTIONS
-  credentials: true
+  origin: "*", // Allow all origins for now to eliminate CORS as the issue
+  methods:["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders:["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+  credentials: false // Note: credentials must be false if origin is "*"
 }));
 app.use(express.json());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  
+  // Intercept OPTIONS method
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // ======================
 // TEST ROUTES
