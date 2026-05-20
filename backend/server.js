@@ -51,11 +51,12 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected Successfully");
-    app.listen(PORT, () => {
+
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {
     console.error("MongoDB connection error:", err.message);
-    process.exit(1); // Exit if DB connection fails
+    process.exit(1);
   });
