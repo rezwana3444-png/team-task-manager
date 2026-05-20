@@ -32,7 +32,7 @@ export default function Dashboard() {
   <div className="min-h-screen bg-gray-100 flex">
 
     {/* Sidebar */}
-    <aside className="w-64 bg-white shadow-md p-5 hidden md:block">
+    <aside className="w-64 bg-white shadow-md p-5">
       <h2 className="text-xl font-bold mb-6">Task Manager</h2>
 
       <div className="space-y-3">
