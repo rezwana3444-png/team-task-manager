@@ -29,28 +29,73 @@ export default function Dashboard() {
   };
 
   return (
-    <div>
-      <h2>Dashboard</h2>
+  <div className="min-h-screen bg-gray-100 flex">
 
-      <p>Token: {localStorage.getItem("token")}</p>
+    {/* Sidebar */}
+    <aside className="w-64 bg-white shadow-md p-5 hidden md:block">
+      <h2 className="text-xl font-bold mb-6">Task Manager</h2>
 
-      <button onClick={() => nav("/create-project")}>Create Project</button>
-      <button onClick={() => nav("/create-task")}>Create Task</button>
-      <button onClick={() => nav("/projects")}>View Projects</button>
-      <button onClick={logout}>Logout</button>
+      <div className="space-y-3">
+        <button onClick={() => nav("/create-project")} className="block text-left text-gray-600 hover:text-black">
+          Create Project
+        </button>
 
-      <h3>Tasks</h3>
+        <button onClick={() => nav("/create-task")} className="block text-left text-gray-600 hover:text-black">
+          Create Task
+        </button>
 
-      {tasks.length === 0 ? (
-        <p>No tasks found</p>
-      ) : (
-        tasks.map((t) => (
-          <div key={t._id}>
-            <p>{t.title}</p>
-            <p>{t.status}</p>
+        <button onClick={() => nav("/projects")} className="block text-left text-gray-600 hover:text-black">
+          View Projects
+        </button>
+
+        <button onClick={logout} className="block text-left text-red-500 hover:text-red-700">
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    {/* Main Content */}
+    <main className="flex-1 p-6">
+
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Dashboard</h2>
+      </div>
+
+      {/* Tasks Card */}
+      <div className="bg-white rounded-xl shadow p-5">
+
+        <h3 className="text-lg font-semibold mb-4">Tasks</h3>
+
+        {tasks.length === 0 ? (
+          <p className="text-gray-500">No tasks found</p>
+        ) : (
+          <div className="space-y-3">
+            {tasks.map((t) => (
+              <div
+                key={t._id}
+                className="flex justify-between items-center border-b pb-2"
+              >
+                <p className="font-medium">{t.title}</p>
+
+                <span
+                  className={`text-sm px-3 py-1 rounded-full ${
+                    t.status === "completed"
+                      ? "bg-green-100 text-green-600"
+                      : t.status === "in progress"
+                      ? "bg-yellow-100 text-yellow-600"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {t.status}
+                </span>
+              </div>
+            ))}
           </div>
-        ))
-      )}
-    </div>
+        )}
+
+      </div>
+    </main>
+  </div>
   );
 }
