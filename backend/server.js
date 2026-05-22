@@ -13,7 +13,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://team-task-manager-tan-seven.vercel.app",
-    "https://team-task-manager-production-e1ce7.up.railway.app"
+    "https://team-task-manager-production-b123.up.railway.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
