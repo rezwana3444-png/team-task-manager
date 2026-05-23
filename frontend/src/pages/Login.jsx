@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../services/api";
 
 function Login() {
@@ -66,14 +67,21 @@ return (
       />
 
       <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
-      >
-        Login
-      </button>
-    </form>
-  </div>
+  type="submit"
+  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+>
+  Login
+</button>
+
+<p className="text-center mt-4">
+  Don't have an account?{" "}
+  <Link to="/signup" className="text-blue-600 font-semibold">
+    Create Account
+  </Link>
+</p>
+
+</form>
+</div>
 );
 }
-
 export default Login;
