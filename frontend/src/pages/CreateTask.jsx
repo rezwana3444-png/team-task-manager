@@ -7,7 +7,10 @@ export default function CreateTask() {
   const [assignedTo, setAssignedTo] = useState("");
 
   const create = async () => {
-    try {
+
+  console.log("BUTTON CLICKED");
+
+  try {
       const res = await API.post("/tasks", {
         title,
         description: "task",
@@ -25,9 +28,12 @@ export default function CreateTask() {
       setAssignedTo("");
 
     } catch (err) {
-      console.log("TASK ERROR:", err.response?.data || err.message);
-      alert("Task creation failed");
-    }
+  console.log("FULL ERROR:", err);
+  console.log("ERROR DATA:", err.response?.data);
+  console.log("STATUS:", err.response?.status);
+
+  alert("Task creation failed");
+}
   };
 
   return (
