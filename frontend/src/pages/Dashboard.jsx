@@ -81,6 +81,12 @@ export default function Dashboard() {
           <button onClick={() => navigate("/create-task")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
             Create Task
           </button>
+          <button
+  onClick={() => navigate("/create-project")}
+  className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
+>
+  Create Project
+</button>
           <button onClick={() => navigate("/projects")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
             Projects
           </button>
