@@ -1,101 +1,82 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
-  const nav = useNavigate();
-
-  const loadTasks = async () => {
-    try {
-      const res = await API.get("/tasks");
-      console.log("TASKS API RESPONSE:", res.data);
-
-      // SAFE handling
-      setTasks(res.data.tasks || res.data || []);
-    } catch (err) {
-      console.log("TASK ERROR:", err.response?.data || err.message);
-      setTasks([]);
-    }
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadTasks();
+    API.get("/tasks")
+      .then((res) => setTasks(res.data.tasks || res.data || []))
+      .catch((err) => console.log("TASK ERROR:", err.response?.data || err.message));
   }, []);
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    nav("/");
-  };
-
   return (
-  <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-slate-100 flex">
+      <aside className="w-64 bg-white border-r border-slate-200 p-6">
+        <h2 className="text-xl font-bold text-slate-900 mb-8">Task Manager</h2>
 
-    {/* Sidebar */}
-    <aside className="w-64 bg-white shadow-md p-5">
-      <h2 className="text-xl font-bold mb-6">Task Manager</h2>
+        <div className="space-y-3">
+          <button onClick={() => navigate("/dashboard")} className="w-full text-left px-4 py-3 rounded-lg bg-blue-50 text-blue-700 font-semibold">
+            Dashboard
+          </button>
+          <button onClick={() => navigate("/create-task")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
+            Create Task
+          </button>
+          <button onClick={() => navigate("/create-project")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
+            Create Project
+          </button>
+          <button onClick={() => navigate("/projects")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
+            Projects
+          </button>
+        </div>
+      </aside>
 
-      <div className="space-y-3">
-        <button onClick={() => nav("/create-project")} className="block text-left text-gray-600 hover:text-black">
-          Create Project
-        </button>
+      <main className="flex-1 p-8">
+        <div className="mb-8">
+          <p className="text-sm font-medium text-slate-500">Overview</p>
+          <h1 className="text-3xl font-bold text-slate-900 mt-1">Dashboard</h1>
+        </div>
 
-        <button onClick={() => nav("/create-task")} className="block text-left text-gray-600 hover:text-black">
-          Create Task
-        </button>
-
-        <button onClick={() => nav("/projects")} className="block text-left text-gray-600 hover:text-black">
-          View Projects
-        </button>
-
-        <button onClick={logout} className="block text-left text-red-500 hover:text-red-700">
-          Logout
-        </button>
-      </div>
-    </aside>
-
-    {/* Main Content */}
-    <main className="flex-1 p-6">
-
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Dashboard</h2>
-      </div>
-
-      {/* Tasks Card */}
-      <div className="bg-white rounded-xl shadow p-5">
-
-        <h3 className="text-lg font-semibold mb-4">Tasks</h3>
-
-        {tasks.length === 0 ? (
-          <p className="text-gray-500">No tasks found</p>
-        ) : (
-          <div className="space-y-3">
-            {tasks.map((t) => (
-              <div
-                key={t._id}
-                className="flex justify-between items-center border-b pb-2"
-              >
-                <p className="font-medium">{t.title}</p>
-
-                <span
-  className={`text-sm px-3 py-1 rounded-full ${
-    t.status === "done"
-      ? "bg-green-100 text-green-600"
-      : t.status === "doing"
-      ? "bg-yellow-100 text-yellow-600"
-      : "bg-gray-100 text-gray-600"
-  }`}
->
-  {t.status}
-</span>
-              </div>
-            ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Total Tasks</p>
+            <h3 className="text-3xl font-bold text-slate-900 mt-2">{tasks.length}</h3>
           </div>
-        )}
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Pending</p>
+            <h3 className="text-3xl font-bold text-yellow-600 mt-2">
+              {tasks.filter((task) => task.status === "todo").length}
+            </h3>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Completed</p>
+            <h3 className="text-3xl font-bold text-green-600 mt-2">
+              {tasks.filter((task) => task.status === "done").length}
+            </h3>
+          </div>
+        </div>
 
-      </div>
-    </main>
-  </div>
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-bold text-slate-900 mb-4">Recent Tasks</h2>
+
+          {tasks.length === 0 ? (
+            <p className="text-slate-500">No tasks found</p>
+          ) : (
+            <div className="space-y-3">
+              {tasks.map((task) => (
+                <div key={task._id} className="flex justify-between items-center border border-slate-200 rounded-lg p-4">
+                  <p className="font-semibold text-slate-900">{task.title}</p>
+                  <span className="text-sm px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+                    {task.status || "todo"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
