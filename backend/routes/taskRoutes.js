@@ -8,7 +8,7 @@ const role = require("../middleware/role");
 console.log("TASK ROUTES LOADED");
 
 // ======================
-// TEST ROUTE (CHECK IF WORKING)
+// TEST ROUTE
 // ======================
 router.get("/test", (req, res) => {
   res.send("TASK ROUTES WORKING");
@@ -19,9 +19,7 @@ router.get("/test", (req, res) => {
 // ======================
 router.get("/", auth, async (req, res) => {
   try {
-    const tasks = await Task.find()
-      .populate("assignedTo")
-
+    const tasks = await Task.find();
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -29,28 +27,34 @@ router.get("/", auth, async (req, res) => {
 });
 
 // ======================
-// CREATE TASK (ADMIN ONLY)
+// CREATE TASK (SIMPLIFIED)
 // ======================
-router.post("/create", auth, role(["admin"]), async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
-    const { title, description, assignedTo, project, dueDate } = req.body;
+    const { title, description } = req.body;
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({
+        error: "Task title is required",
+      });
+    }
 
     const task = await Task.create({
-      title,
-      description,
-      assignedTo,
-      project,
-      dueDate,
-      status: "Pending"
+      title: title.trim(),
+      description: description?.trim() || "",
+      status: "todo",
     });
 
     res.status(201).json({
       message: "Task created successfully",
-      task
+      task,
     });
-
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.log("TASK CREATE ERROR:", err);
+
+    res.status(500).json({
+      error: err.message,
+    });
   }
 });
 
@@ -80,16 +84,16 @@ router.put("/status/:id", auth, async (req, res) => {
 // ======================
 // DASHBOARD STATS
 // ======================
-router.get("/dashboard", auth, role(["Admin"]), async (req, res) => {
+router.get("/dashboard", auth, role(["admin"]), async (req, res) => {
   try {
     const total = await Task.countDocuments();
-    const pending = await Task.countDocuments({ status: "Pending" });
-    const done = await Task.countDocuments({ status: "Done" });
+    const pending = await Task.countDocuments({ status: "todo" });
+    const done = await Task.countDocuments({ status: "done" });
 
     res.json({
       total,
       pending,
-      done
+      done,
     });
 
   } catch (err) {
