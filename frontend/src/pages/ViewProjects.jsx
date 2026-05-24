@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api";
 
 export default function ViewProjects() {
   const [projects, setProjects] = useState([]);
@@ -8,21 +7,25 @@ export default function ViewProjects() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("TOKEN IN PROJECTS:", localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
 
-    API.get("/projects")
-      .then((res) => {
-        console.log("PROJECTS RESPONSE:", res.data);
+    fetch("https://team-task-manager-production-b123.up.railway.app/api/projects", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("PROJECTS DIRECT RESPONSE:", data);
 
-        const data = Array.isArray(res.data)
-          ? res.data
-          : res.data.projects || res.data.data || [];
+        const projectsData = Array.isArray(data)
+          ? data
+          : data.projects || data.data || [];
 
-        setProjects(data);
+        setProjects(projectsData);
       })
       .catch((err) => {
-        console.log("PROJECTS ERROR:", err.response?.status);
-        console.log("PROJECTS ERROR DATA:", err.response?.data);
+        console.log("PROJECTS DIRECT ERROR:", err);
       })
       .finally(() => {
         setLoading(false);
@@ -96,7 +99,6 @@ export default function ViewProjects() {
                           project.projectTitle ||
                           "Untitled Project"}
                       </h3>
-
                       <p className="text-sm text-slate-500 mt-2">
                         {project.description || "No description added"}
                       </p>
@@ -115,10 +117,6 @@ export default function ViewProjects() {
                       {project._id}
                     </p>
                   </div>
-
-                  <pre className="text-xs bg-slate-100 p-3 rounded-lg mt-3 overflow-auto">
-                    {JSON.stringify(project, null, 2)}
-                  </pre>
                 </div>
               ))}
             </div>

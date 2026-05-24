@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../services/api";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -8,16 +7,25 @@ export default function Tasks() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    API.get("/tasks")
-      .then((res) => {
-        const data = Array.isArray(res.data)
-          ? res.data
-          : res.data.tasks || res.data.data || [];
+    const token = localStorage.getItem("token");
 
-        setTasks(data);
+    fetch("https://team-task-manager-production-b123.up.railway.app/api/tasks", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("TASKS DIRECT RESPONSE:", data);
+
+        const tasksData = Array.isArray(data)
+          ? data
+          : data.tasks || data.data || [];
+
+        setTasks(tasksData);
       })
       .catch((err) => {
-        console.log("TASKS ERROR:", err.response?.data || err.message);
+        console.log("TASKS DIRECT ERROR:", err);
       })
       .finally(() => {
         setLoading(false);
@@ -46,38 +54,19 @@ export default function Tasks() {
         <h2 className="text-xl font-bold text-slate-900 mb-8">Task Manager</h2>
 
         <div className="space-y-3">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
-          >
+          <button onClick={() => navigate("/dashboard")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
             Dashboard
           </button>
-
-          <button
-            onClick={() => navigate("/tasks")}
-            className="w-full text-left px-4 py-3 rounded-lg bg-blue-50 text-blue-700 font-semibold"
-          >
+          <button onClick={() => navigate("/tasks")} className="w-full text-left px-4 py-3 rounded-lg bg-blue-50 text-blue-700 font-semibold">
             View Tasks
           </button>
-
-          <button
-            onClick={() => navigate("/create-task")}
-            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
-          >
+          <button onClick={() => navigate("/create-task")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
             Create Task
           </button>
-
-          <button
-            onClick={() => navigate("/create-project")}
-            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
-          >
+          <button onClick={() => navigate("/create-project")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
             Create Project
           </button>
-
-          <button
-            onClick={() => navigate("/projects")}
-            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
-          >
+          <button onClick={() => navigate("/projects")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
             Projects
           </button>
         </div>
@@ -93,10 +82,7 @@ export default function Tasks() {
             </p>
           </div>
 
-          <button
-            onClick={() => navigate("/create-task")}
-            className="bg-blue-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-blue-700"
-          >
+          <button onClick={() => navigate("/create-task")} className="bg-blue-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-blue-700">
             Create Task
           </button>
         </div>
@@ -104,30 +90,19 @@ export default function Tasks() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <p className="text-sm text-slate-500">Total Tasks</p>
-            <h3 className="text-3xl font-bold text-slate-900 mt-2">
-              {stats.total}
-            </h3>
+            <h3 className="text-3xl font-bold text-slate-900 mt-2">{stats.total}</h3>
           </div>
-
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <p className="text-sm text-slate-500">Todo</p>
-            <h3 className="text-3xl font-bold text-slate-700 mt-2">
-              {stats.todo}
-            </h3>
+            <h3 className="text-3xl font-bold text-slate-700 mt-2">{stats.todo}</h3>
           </div>
-
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <p className="text-sm text-slate-500">Doing</p>
-            <h3 className="text-3xl font-bold text-yellow-600 mt-2">
-              {stats.doing}
-            </h3>
+            <h3 className="text-3xl font-bold text-yellow-600 mt-2">{stats.doing}</h3>
           </div>
-
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
             <p className="text-sm text-slate-500">Done</p>
-            <h3 className="text-3xl font-bold text-green-600 mt-2">
-              {stats.done}
-            </h3>
+            <h3 className="text-3xl font-bold text-green-600 mt-2">{stats.done}</h3>
           </div>
         </div>
 
@@ -136,44 +111,29 @@ export default function Tasks() {
             <p className="text-slate-500">Loading tasks...</p>
           ) : tasks.length === 0 ? (
             <div className="text-center py-12">
-              <h3 className="text-lg font-semibold text-slate-900">
-                No tasks found
-              </h3>
-
+              <h3 className="text-lg font-semibold text-slate-900">No tasks found</h3>
               <p className="text-sm text-slate-500 mt-2">
                 Create your first task to start tracking work.
               </p>
-
-              <button
-                onClick={() => navigate("/create-task")}
-                className="mt-5 bg-blue-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-blue-700"
-              >
+              <button onClick={() => navigate("/create-task")} className="mt-5 bg-blue-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-blue-700">
                 Create Task
               </button>
             </div>
           ) : (
             <div className="space-y-4">
               {tasks.map((task) => (
-                <div
-                  key={task._id}
-                  className="border border-slate-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-sm transition"
-                >
+                <div key={task._id} className="border border-slate-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-sm transition">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h3 className="text-lg font-bold text-slate-900">
-                        {task.title}
+                        {task.title || "Untitled Task"}
                       </h3>
-
                       <p className="text-sm text-slate-500 mt-2">
                         {task.description || "No description added"}
                       </p>
                     </div>
 
-                    <span
-                      className={`text-sm font-semibold px-3 py-1 rounded-full ${statusClass(
-                        task.status
-                      )}`}
-                    >
+                    <span className={`text-sm font-semibold px-3 py-1 rounded-full ${statusClass(task.status)}`}>
                       {task.status || "todo"}
                     </span>
                   </div>
