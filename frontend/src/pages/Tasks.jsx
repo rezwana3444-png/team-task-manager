@@ -40,24 +40,6 @@ export default function Tasks() {
     return "bg-slate-100 text-slate-700";
   };
 
-  const getAssignee = (task) => {
-    return (
-      task.assignedTo?.name ||
-      task.assignedTo?.email ||
-      task.assignedTo ||
-      "Not assigned"
-    );
-  };
-
-  const getProject = (task) => {
-    return task.project?.name || task.project || "General";
-  };
-
-  const getDueDate = (task) => {
-    if (!task.dueDate) return "Not set";
-    return new Date(task.dueDate).toLocaleDateString();
-  };
-
   return (
     <div className="min-h-screen bg-slate-100 flex">
       <aside className="w-64 bg-white border-r border-slate-200 p-6">
@@ -194,23 +176,6 @@ export default function Tasks() {
                     >
                       {task.status || "todo"}
                     </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5 text-sm text-slate-600">
-                    <div className="bg-slate-50 rounded-lg p-3">
-                      <p className="font-semibold text-slate-700">Assignee</p>
-                      <p className="mt-1 break-all">{getAssignee(task)}</p>
-                    </div>
-
-                    <div className="bg-slate-50 rounded-lg p-3">
-                      <p className="font-semibold text-slate-700">Project</p>
-                      <p className="mt-1 break-all">{getProject(task)}</p>
-                    </div>
-
-                    <div className="bg-slate-50 rounded-lg p-3">
-                      <p className="font-semibold text-slate-700">Due Date</p>
-                      <p className="mt-1">{getDueDate(task)}</p>
-                    </div>
                   </div>
                 </div>
               ))}
