@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,7 +24,7 @@ function Signup() {
       console.log("SIGNUP SUCCESS:", res.data);
 
       alert("Signup successful!");
-
+      navigate("/login");
     } catch (err) {
       console.log("FULL ERROR:", err);
       console.log("ERROR RESPONSE:", err.response);
@@ -33,7 +35,6 @@ function Signup() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md"
@@ -96,7 +97,6 @@ function Signup() {
             Login
           </Link>
         </p>
-
       </form>
     </div>
   );
