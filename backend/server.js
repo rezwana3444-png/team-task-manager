@@ -38,6 +38,7 @@ const taskRoutes = require("./routes/taskRoutes");
 // ======================
 // API ROUTES (Note the /api prefix)
 // ======================
+app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
