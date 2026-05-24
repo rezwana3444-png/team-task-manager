@@ -17,7 +17,7 @@ router.get("/test", (req, res) => {
 // ======================
 // GET ALL TASKS
 // ======================
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const tasks = await Task.find();
     res.json(tasks);

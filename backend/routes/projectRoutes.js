@@ -7,7 +7,7 @@ const auth = require("../middleware/auth");
 console.log("PROJECT ROUTES LOADED");
 
 // CREATE PROJECT
-router.post("/", auth, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const project = await Project.create({
       name: req.body.name,
