@@ -24,7 +24,7 @@ function Signup() {
       console.log("SIGNUP SUCCESS:", res.data);
 
       alert("Signup successful!");
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       console.log("FULL ERROR:", err);
       console.log("ERROR RESPONSE:", err.response);
