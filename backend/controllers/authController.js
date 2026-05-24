@@ -1,16 +1,28 @@
-const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // ================= SIGNUP =================
-router.post("/signup", async (req, res) => {
+exports.signup = async (req, res) => {
   try {
+    console.log("REQ BODY:", req.body);
+
     const { name, email, password, role } = req.body;
 
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User already exists",
+      });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
+    // Create user
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -18,51 +30,56 @@ router.post("/signup", async (req, res) => {
     });
 
     res.status(201).json({
-      message: "User created",
+      message: "Signup successful",
+      user,
     });
 
   } catch (err) {
     console.log("SIGNUP ERROR:", err);
 
     res.status(500).json({
-      error: err.message,
+      message: err.message,
     });
   }
-});
+};
 
 // ================= LOGIN =================
-router.post("/login", async (req, res) => {
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
       return res.status(400).json({
         message: "Invalid credentials",
       });
     }
 
     const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
-    res.json({
+    res.status(200).json({
       token,
-      role: user.role,
+      user,
     });
 
   } catch (err) {
     console.log("LOGIN ERROR:", err);
 
     res.status(500).json({
-      error: err.message,
+      message: err.message,
     });
   }
-});
-
-module.exports = router;
+};
