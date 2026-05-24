@@ -4,6 +4,7 @@ import API from "../services/api";
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -17,9 +18,23 @@ export default function Dashboard() {
         setTasks(data);
       })
       .catch((err) => {
-        console.log("DASHBOARD ERROR:", err.response?.data || err.message);
+        console.log("TASKS ERROR:", err.response?.data || err.message);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
+
+    API.get("/users")
+      .then((res) => {
+        const data = Array.isArray(res.data)
+          ? res.data
+          : res.data.users || res.data.data || [];
+
+        setUsers(data);
+      })
+      .catch((err) => {
+        console.log("USERS ERROR:", err.response?.data || err.message);
+      });
   }, []);
 
   const stats = useMemo(() => {
@@ -32,7 +47,7 @@ export default function Dashboard() {
   }, [tasks]);
 
   const userProgress = useMemo(() => {
-    const users = {};
+    const groupedUsers = {};
 
     tasks.forEach((task) => {
       const userName =
@@ -41,8 +56,8 @@ export default function Dashboard() {
         task.assignedTo ||
         "Unassigned";
 
-      if (!users[userName]) {
-        users[userName] = {
+      if (!groupedUsers[userName]) {
+        groupedUsers[userName] = {
           name: userName,
           total: 0,
           completed: 0,
@@ -51,14 +66,14 @@ export default function Dashboard() {
         };
       }
 
-      users[userName].total += 1;
+      groupedUsers[userName].total += 1;
 
-      if (task.status === "done") users[userName].completed += 1;
-      else if (task.status === "doing") users[userName].doing += 1;
-      else users[userName].pending += 1;
+      if (task.status === "done") groupedUsers[userName].completed += 1;
+      else if (task.status === "doing") groupedUsers[userName].doing += 1;
+      else groupedUsers[userName].pending += 1;
     });
 
-    return Object.values(users);
+    return Object.values(groupedUsers);
   }, [tasks]);
 
   const logout = () => {
@@ -72,25 +87,45 @@ export default function Dashboard() {
         <h2 className="text-xl font-bold text-slate-900 mb-8">Task Manager</h2>
 
         <div className="space-y-3">
-          <button onClick={() => navigate("/dashboard")} className="w-full text-left px-4 py-3 rounded-lg bg-blue-50 text-blue-700 font-semibold">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="w-full text-left px-4 py-3 rounded-lg bg-blue-50 text-blue-700 font-semibold"
+          >
             Dashboard
           </button>
-          <button onClick={() => navigate("/tasks")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
+
+          <button
+            onClick={() => navigate("/tasks")}
+            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
+          >
             View Tasks
           </button>
-          <button onClick={() => navigate("/create-task")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
+
+          <button
+            onClick={() => navigate("/create-task")}
+            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
+          >
             Create Task
           </button>
+
           <button
-  onClick={() => navigate("/create-project")}
-  className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
->
-  Create Project
-</button>
-          <button onClick={() => navigate("/projects")} className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100">
+            onClick={() => navigate("/create-project")}
+            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
+          >
+            Create Project
+          </button>
+
+          <button
+            onClick={() => navigate("/projects")}
+            className="w-full text-left px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100"
+          >
             Projects
           </button>
-          <button onClick={logout} className="w-full text-left px-4 py-3 rounded-lg text-red-600 hover:bg-red-50">
+
+          <button
+            onClick={logout}
+            className="w-full text-left px-4 py-3 rounded-lg text-red-600 hover:bg-red-50"
+          >
             Logout
           </button>
         </div>
@@ -101,7 +136,7 @@ export default function Dashboard() {
           <p className="text-sm font-medium text-slate-500">Overview</p>
           <h1 className="text-3xl font-bold text-slate-900 mt-1">Dashboard</h1>
           <p className="text-sm text-slate-500 mt-2">
-            Track team progress and task completion.
+            Track team users, task progress, and completion details.
           </p>
         </div>
 
@@ -112,31 +147,82 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Total Tasks</p>
-                <h3 className="text-3xl font-bold text-slate-900 mt-2">{stats.total}</h3>
+                <h3 className="text-3xl font-bold text-slate-900 mt-2">
+                  {stats.total}
+                </h3>
               </div>
+
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Completed</p>
-                <h3 className="text-3xl font-bold text-green-600 mt-2">{stats.completed}</h3>
+                <h3 className="text-3xl font-bold text-green-600 mt-2">
+                  {stats.completed}
+                </h3>
               </div>
+
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <p className="text-sm text-slate-500">In Progress</p>
-                <h3 className="text-3xl font-bold text-yellow-600 mt-2">{stats.doing}</h3>
+                <h3 className="text-3xl font-bold text-yellow-600 mt-2">
+                  {stats.doing}
+                </h3>
               </div>
+
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                 <p className="text-sm text-slate-500">Pending</p>
-                <h3 className="text-3xl font-bold text-slate-700 mt-2">{stats.pending}</h3>
+                <h3 className="text-3xl font-bold text-slate-700 mt-2">
+                  {stats.pending}
+                </h3>
               </div>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6 mb-8">
+              <div className="mb-5">
+                <h2 className="text-xl font-bold text-slate-900">
+                  User Details
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  Team members and account roles.
+                </p>
+              </div>
+
+              {users.length === 0 ? (
+                <p className="text-slate-500">No users found</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {users.map((user) => (
+                    <div
+                      key={user._id}
+                      className="border border-slate-200 rounded-lg p-4"
+                    >
+                      <h3 className="font-bold text-slate-900">
+                        {user.name || "Unnamed User"}
+                      </h3>
+                      <p className="text-sm text-slate-500 mt-1">
+                        {user.email}
+                      </p>
+                      <span className="inline-block mt-3 text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700">
+                        {user.role || "member"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">User Progress</h2>
+                  <h2 className="text-xl font-bold text-slate-900">
+                    User Progress
+                  </h2>
                   <p className="text-sm text-slate-500 mt-1">
-                    Task distribution and completion by user.
+                    Task distribution and completion by assigned user.
                   </p>
                 </div>
-                <button onClick={() => navigate("/tasks")} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700">
+
+                <button
+                  onClick={() => navigate("/tasks")}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700"
+                >
                   View Tasks
                 </button>
               </div>
@@ -152,21 +238,30 @@ export default function Dashboard() {
                         : Math.round((user.completed / user.total) * 100);
 
                     return (
-                      <div key={user.name} className="border border-slate-200 rounded-lg p-4">
+                      <div
+                        key={user.name}
+                        className="border border-slate-200 rounded-lg p-4"
+                      >
                         <div className="flex justify-between items-center mb-3">
                           <div>
-                            <h3 className="font-bold text-slate-900">{user.name}</h3>
+                            <h3 className="font-bold text-slate-900">
+                              {user.name}
+                            </h3>
                             <p className="text-sm text-slate-500">
                               {user.completed} of {user.total} tasks completed
                             </p>
                           </div>
+
                           <span className="text-sm font-semibold text-blue-700">
                             {percent}%
                           </span>
                         </div>
 
                         <div className="w-full bg-slate-100 rounded-full h-3">
-                          <div className="bg-blue-600 h-3 rounded-full" style={{ width: `${percent}%` }} />
+                          <div
+                            className="bg-blue-600 h-3 rounded-full"
+                            style={{ width: `${percent}%` }}
+                          />
                         </div>
 
                         <div className="flex gap-4 mt-3 text-sm text-slate-600">
