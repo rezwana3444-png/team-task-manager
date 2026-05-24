@@ -31,7 +31,7 @@ router.get("/", auth, async (req, res) => {
 // ======================
 // CREATE TASK (ADMIN ONLY)
 // ======================
-router.post("/create", auth, role(["Admin"]), async (req, res) => {
+router.post("/create", auth, role(["admin"]), async (req, res) => {
   try {
     const { title, description, assignedTo, project, dueDate } = req.body;
 
