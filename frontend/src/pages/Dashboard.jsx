@@ -79,16 +79,16 @@ export default function Dashboard() {
                 <p className="font-medium">{t.title}</p>
 
                 <span
-                  className={`text-sm px-3 py-1 rounded-full ${
-                    t.status === "completed"
-                      ? "bg-green-100 text-green-600"
-                      : t.status === "in progress"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {t.status}
-                </span>
+  className={`text-sm px-3 py-1 rounded-full ${
+    t.status === "done"
+      ? "bg-green-100 text-green-600"
+      : t.status === "doing"
+      ? "bg-yellow-100 text-yellow-600"
+      : "bg-gray-100 text-gray-600"
+  }`}
+>
+  {t.status}
+</span>
               </div>
             ))}
           </div>
