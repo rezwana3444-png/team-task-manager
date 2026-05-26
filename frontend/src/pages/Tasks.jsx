@@ -9,7 +9,7 @@ export default function Tasks() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("https://team-task-manager-production-b123.up.railway.app/api/tasks", {
+    fetch("https://team-task-manager-production-0482.up.railway.app/api/tasks", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
