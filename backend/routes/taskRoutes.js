@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 // ======================
 // CREATE TASK (SIMPLIFIED)
 // ======================
-router.post("/create", async (req, res) => {
+router.post("/create",auth , async (req, res) => {
   try {
     const { title, description } = req.body;
 
