@@ -9,42 +9,28 @@ function Login() {
   });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    console.log("LOGIN CLICKED");
-    console.log("LOGIN DATA:", formData);
+  try {
+    const res = await API.post("/auth/login", formData);
 
-    try {
-      const res = await API.post("/auth/login", formData);
+    const token =
+      res.data.token ||
+      res.data.accessToken ||
+      res.data.jwt ||
+      res.data.data?.token;
 
-      alert("LOGIN RESPONSE: " + JSON.stringify(res.data));
-      console.log("LOGIN SUCCESS:", res.data);
-
-      const token =
-        res.data.token ||
-        res.data.accessToken ||
-        res.data.jwt ||
-        res.data.data?.token;
-
-      alert("TOKEN FOUND: " + token);
-
-      if (!token) {
-        console.log("NO TOKEN FOUND IN LOGIN RESPONSE");
-        alert("Login succeeded, but no token was returned from backend");
-        return;
-      }
-
-      localStorage.setItem("token", token);
-      console.log("TOKEN SAVED:", localStorage.getItem("token"));
-
-      alert("Login successful!");
-      window.location.href = "/dashboard";
-    } catch (err) {
-      console.log("FULL ERROR:", err);
-      console.log("ERROR DATA:", err.response?.data);
-      alert(err.response?.data?.message || "Login failed");
+    if (!token) {
+      alert("Login failed. No token received.");
+      return;
     }
-  };
+
+    localStorage.setItem("token", token);
+    window.location.href = "/dashboard";
+  } catch (err) {
+    alert(err.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
