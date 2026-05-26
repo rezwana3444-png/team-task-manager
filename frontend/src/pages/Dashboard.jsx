@@ -5,13 +5,21 @@ import API from "../services/api";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
+
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     email: "",
   });
+
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+  });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -59,6 +67,26 @@ export default function Dashboard() {
       alert(err.response?.data?.message || "Profile update failed");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    try {
+      setChangingPassword(true);
+
+      await API.put("/users/change-password", passwordData);
+
+      alert("Password changed successfully");
+      setPasswordData({
+        oldPassword: "",
+        newPassword: "",
+      });
+    } catch (err) {
+      alert(err.response?.data?.message || "Password change failed");
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -152,11 +180,9 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-bold text-slate-900">
-                My Profile
-              </h2>
+              <h2 className="text-xl font-bold text-slate-900">My Profile</h2>
               <p className="text-sm text-slate-500 mt-1">
-                Update your username or email.
+                Update your username, email, or password.
               </p>
 
               {!user ? (
@@ -212,6 +238,64 @@ export default function Dashboard() {
                       {saving ? "Saving..." : "Save Changes"}
                     </button>
                   </form>
+
+                  <div className="border-t border-slate-200 mt-8 pt-6">
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Change Password
+                    </h3>
+                    <p className="text-sm text-slate-500 mt-2">
+                      Enter your old password and choose a new one.
+                    </p>
+
+                    <form
+                      onSubmit={handlePasswordChange}
+                      className="space-y-5 mt-5"
+                    >
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Old Password
+                        </label>
+                        <input
+                          type="password"
+                          value={passwordData.oldPassword}
+                          onChange={(e) =>
+                            setPasswordData({
+                              ...passwordData,
+                              oldPassword: e.target.value,
+                            })
+                          }
+                          className="w-full border border-slate-300 rounded-lg px-4 py-3"
+                          placeholder="Enter old password"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          New Password
+                        </label>
+                        <input
+                          type="password"
+                          value={passwordData.newPassword}
+                          onChange={(e) =>
+                            setPasswordData({
+                              ...passwordData,
+                              newPassword: e.target.value,
+                            })
+                          }
+                          className="w-full border border-slate-300 rounded-lg px-4 py-3"
+                          placeholder="Enter new password"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={changingPassword}
+                        className="bg-slate-800 text-white px-5 py-3 rounded-lg font-semibold hover:bg-slate-900 disabled:bg-slate-400"
+                      >
+                        {changingPassword ? "Changing..." : "Change Password"}
+                      </button>
+                    </form>
+                  </div>
 
                   <div className="border-t border-slate-200 mt-8 pt-6">
                     <h3 className="text-lg font-bold text-slate-900">

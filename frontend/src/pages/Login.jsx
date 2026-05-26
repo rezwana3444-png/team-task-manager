@@ -68,7 +68,20 @@ function Login() {
         >
           Login
         </button>
+        <button
+  type="submit"
+  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+>
+  Login
+</button>
 
+<button
+  type="button"
+  onClick={() => alert("Please contact admin to reset your password.")}
+  className="text-sm text-blue-600 font-semibold mt-4 w-full"
+>
+  Forgot password?
+</button>
         <p className="text-center mt-4">
           Don't have an account?{" "}
           <Link to="/signup" className="text-blue-600 font-semibold">
