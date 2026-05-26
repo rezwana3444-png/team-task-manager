@@ -27,9 +27,9 @@ router.get("/", async (req, res) => {
 });
 
 // ======================
-// CREATE TASK (SIMPLIFIED)
+// CREATE TASK
 // ======================
-router.post("/create",auth , async (req, res) => {
+router.post("/create", auth, async (req, res) => {
   try {
     const { title, description } = req.body;
 
@@ -95,7 +95,52 @@ router.get("/dashboard", auth, role(["admin"]), async (req, res) => {
       pending,
       done,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// ======================
+// EDIT TASK
+// ======================
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const { title, description, status } = req.body;
+
+    const updateData = {};
+
+    if (title !== undefined) updateData.title = title.trim();
+    if (description !== undefined) updateData.description = description.trim();
+    if (status !== undefined) updateData.status = status;
+
+    const task = await Task.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ======================
+// DELETE TASK
+// ======================
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json({ message: "Task deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
