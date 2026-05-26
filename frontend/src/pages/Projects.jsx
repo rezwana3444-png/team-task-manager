@@ -7,18 +7,50 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchProjects = async () => {
+    try {
+      const res = await API.get("/projects");
+      setProjects(res.data.projects || res.data || []);
+    } catch (err) {
+      console.log("PROJECTS ERROR:", err.response?.data || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    API.get("/projects")
-      .then((res) => {
-        setProjects(res.data.projects || res.data || []);
-      })
-      .catch((err) => {
-        console.log("PROJECTS ERROR:", err.response?.data || err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    fetchProjects();
   }, []);
+
+  const handleEditProject = async (project) => {
+    const name = prompt("Enter new project name", project.name || "");
+
+    if (!name || !name.trim()) return;
+
+    try {
+      const res = await API.put(`/projects/${project._id}`, {
+        name: name.trim(),
+        description: project.description || "",
+      });
+
+      setProjects(
+        projects.map((p) => (p._id === project._id ? res.data : p))
+      );
+    } catch (err) {
+      alert(err.response?.data?.message || "Project update failed");
+    }
+  };
+
+  const handleDeleteProject = async (id) => {
+    if (!window.confirm("Delete this project?")) return;
+
+    try {
+      await API.delete(`/projects/${id}`);
+      setProjects(projects.filter((project) => project._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.message || "Project delete failed");
+    }
+  };
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -106,12 +138,34 @@ export default function Projects() {
                   className="border border-slate-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-sm transition"
                 >
                   <h3 className="text-lg font-bold text-slate-900">
-                    {project.name}
+                    {project.name || "Untitled Project"}
                   </h3>
+
+                  {project.description && (
+                    <p className="text-sm text-slate-500 mt-2">
+                      {project.description}
+                    </p>
+                  )}
 
                   <p className="text-sm text-slate-500 mt-2 break-all">
                     Project ID: {project._id}
                   </p>
+
+                  <div className="flex gap-3 mt-5">
+                    <button
+                      onClick={() => handleEditProject(project)}
+                      className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteProject(project._id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
