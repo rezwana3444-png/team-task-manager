@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 import Tasks from "./pages/Tasks";
 import ViewProjects from "./pages/ViewProjects";
 import CreateTask from "./pages/CreateTask";
@@ -29,8 +30,8 @@ function App() {
         {/* PROJECTS */}
         <Route path="/projects" element={<ViewProjects />} />
         <Route path="/create-project" element={<CreateProject />} />
-
-      </Routes>
+        <Route path="/profile" element={<Profile />} />
+     </Routes>
     </BrowserRouter>
   );
 }
